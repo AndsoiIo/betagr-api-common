@@ -1,8 +1,8 @@
 import aiohttp
 import logging
 
-from ..utils import logger as log
-from ..utils.utils import prepared_data
+from utils import logger as log
+from utils.utils import prepared_data
 
 
 class BaseClient:
@@ -123,3 +123,27 @@ class BaseClientParser(BaseClient):
         url = self._api_uri['real_teams']
         async with await super().put(url, cookies=self._cookies, params=None) as response:
             return await response.text()
+
+
+class BaseClientAggregator(BaseClient):
+    def __init__(self, host, port, headers=None):
+        super().__init__(host, port, headers=headers)
+
+        self._api_uri = {
+            'aggregator': 'aggregator',
+            'aggregator_by_link': 'aggregator/{link_id}',
+        }
+
+    async def aggregator(self, team=None):
+        url = self._api_uri['aggregator']
+        if team:
+            url = f"{url}/?team={team}"
+        async with await super().get(url, cookies=self._cookies, params=None) as response:
+            return await response.json()
+
+    async def aggregator_by_link(self, link_id, team=None):
+        url = self._api_uri['aggregator_by_link'].format(link_id=link_id)
+        if team:
+            url = f"{url}/?team={team}"
+        async with await super().get(url, cookies=self._cookies, params=None) as response:
+            return await response.json()
