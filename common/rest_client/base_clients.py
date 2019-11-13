@@ -27,18 +27,6 @@ class BaseClient:
     def url(self):
         return self._url
 
-    # def update_cookies(self, cookies):
-    #     """ Use to update client cookies
-    #     :param cookies: http.cookie.SimpleCookie
-    #     :return: None
-    #     """
-    #     try:
-    #         for key, morsel in cookies.items():
-    #             self._cookies.update({key: str(morsel.value)})
-    #     except Exception as e:
-    #         logging.error(f"Client [update cookie] error: {e.__class__.__name__}: {e}", exc_info=True)
-
-
     async def _request(self, method,api_uri, params=None, data=None, **kwargs):
         url = self.url + api_uri
         # console log
