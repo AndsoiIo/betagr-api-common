@@ -34,13 +34,13 @@ from common.rest_client import BaseClient
 class BakeryClient(BaseClient):
     def __init__(self, headers):
         super().__init__(host='www.some-bakery.com', port=8000, headers=headers)
-        self.api_uris = {
+        self._api_uri = {
             'bake_bread' : 'api/bake-bread',
         }
 
     async def bake_bread(self, bread_flour='first-grade'):
         body = {'flour': bread_flour}
-        api_uri = self.api_uris['bake-bread']
+        api_uri = self._api_uri['bake-bread']
 
         return await super().post(api_uri, body=body, cookies=self._cookies)
 ```
@@ -75,10 +75,10 @@ Api abstraction for sso-client with the release of basic methods:
 * sign_out
 * reset_password
 
-``BaseClientSSO.api_uris`` should be used to represent method and relevant api path.
+``BaseClientSSO._api_uri`` should be used to represent method and relevant api path.
 For default it looks like:
 ```python
-BaseClientSSO.api_uris = {
+BaseClientSSO._api_uri = {
             'sign_up': 'sign-up',
             'sign_in': 'sign-in',
             'sign_out': 'sign-out',
@@ -86,7 +86,7 @@ BaseClientSSO.api_uris = {
             }
 ```
 
-Use ``sef.api_uris.update({'my_new_method': 'api_uri_used_in_method'})``  - it is some kind of bookmark that makes it easy to maintain your inherited classes.
+Use ``sef._api_uri.update({'my_new_method': 'api_uri_used_in_method'})``  - it is some kind of bookmark that makes it easy to maintain your inherited classes.
 
 ```python
 import os

@@ -70,7 +70,7 @@ class BaseClientSSO(BaseClient):
 
     def __init__(self, host, port, headers=None):
         super().__init__(host=host, port=port, headers=headers)
-        self.api_uris = {
+        self._api_uri = {
             'sign_up': 'sign-up',
             'sign_in': 'sign-in',
             'sign_out': 'sign-out',
@@ -78,19 +78,19 @@ class BaseClientSSO(BaseClient):
         }
 
     async def sign_up(self, body):
-        url = self.api_uris['sign_up']
+        url = self._api_uri['sign_up']
         return await self.post(url, body=body, cookies=self._cookies)
 
     async def sign_in(self, body):
-        url = self.api_uris['sign_in']
+        url = self._api_uri['sign_in']
         return await self.post(url, body=body, cookies=self._cookies)
 
     async def sign_out(self):
-        url = self.api_uris['sign_out']
+        url = self._api_uri['sign_out']
         return await self.post(url, cookies=self._cookies)
 
     async def reset_password(self, body):
-        url = self.api_uris['reset_password']
+        url = self._api_uri['reset_password']
         return await self.patch(url, body=body, cookies=self._cookies)
 
 
