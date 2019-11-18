@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="betagr-common",
-    version="0.1.2",
+    version="0.1.4",
     author="AndsoiIo",
     author_email="andsoiio@gmail.com",
     description="API-Common package for betagr-project.",
