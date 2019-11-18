@@ -1,11 +1,9 @@
 import asyncio
-import aiohttp
 from rest_client.base_clients import BaseClient
 
 # example
 if __name__ == "__main__":
     async def main():
-
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         client = BaseClient(host='http://localhost', port=8000, headers=headers)
         print(client.url)
