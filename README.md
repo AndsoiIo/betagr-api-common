@@ -29,20 +29,21 @@ It is a base class provides a basic REST API methods which are simple wrapper ov
 Api-clients of each  services should be inherited from the BaseClient.
 
 ```python
-from common.rest_client import BaseClient
+from common.rest_client.base_client import BaseClient
 
 class BakeryClient(BaseClient):
+
+    _host = 'www.some-bakery.com'
+    _port = 8000
+
     def __init__(self, headers):
-        super().__init__(host='www.some-bakery.com', port=8000, headers=headers)
-        self._api_uri = {
-            'bake_bread' : 'api/bake-bread',
-        }
+        super().__init__(headers=headers)
 
     async def bake_bread(self, bread_flour='first-grade'):
         body = {'flour': bread_flour}
-        api_uri = self._api_uri['bake-bread']
-
-        return await super().post(api_uri, body=body, cookies=self._cookies)
+        api_uri = 'api/bake-bread'
+        
+        return await self.post(api_uri, body=body)
 ```
 
 ```python
@@ -50,7 +51,7 @@ import asyncio
 import BakeryClient
 
 db_orders = {'John Doe': {'flour': 'first-grade'},
-                     'Anderson': {'flour': 'second-grade'}}
+             'Anderson': {'flour': 'second-grade'}}
 
 async def main():
     async for client in db_orders:
@@ -60,8 +61,8 @@ async def main():
         
         bread_flour_type = db_orders[client].get('flour')            
 
-        async with await bakery_client.bake_bread(bread_flour_type) as resp:
-            assert resp.status == 200    # bread was bake!
+        response = await bakery_client.bake_bread(bread_flour_type)
+        assert response.status == 200    # bread was bake!
                         
 
 loop = asyncio.get_event_loop()
@@ -75,53 +76,43 @@ Api abstraction for sso-client with the release of basic methods:
 * sign_out
 * reset_password
 
-``BaseClientSSO._api_uri`` should be used to represent method and relevant api path.
-For default it looks like:
-```python
-BaseClientSSO._api_uri = {
-            'sign_up': 'sign-up',
-            'sign_in': 'sign-in',
-            'sign_out': 'sign-out',
-            'reset_password': 'reset-password',
-            }
-```
-
-Use ``sef._api_uri.update({'my_new_method': 'api_uri_used_in_method'})``  - it is some kind of bookmark that makes it easy to maintain your inherited classes.
-
 ```python
 import os
 import asyncio
-from common.rest_client import BaseClientSSO
+from common.rest_client.base_client_sso import BaseClientSSO
 
 
 async def main():
-    host = os.getenv('SSO_API_HOST')
-    port = os.getenv('SSO_API_PORT')
+    # env should contains 'SSO_API_HOST' and 'SSO_API_PORT' variables
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     
-    sso_client = BaseClientSSO(host, port, headers)
+    sso_client = BaseClientSSO(headers)
 
     body = {'username': 'john doe',
             'password': 'qwerty'}
 
-    async with await sso_client.sign_up(body) as response:
-        print(response)
+    response = await sso_client.sign_up(body)
+    print(response)    # ClientResponse -> defaults
+                       # {'json': {},
+                       #  'status': 200,
+                       #  'headers': {'Content-Type: "application/json"},
+                       #  'raw_content': b''}
 
     body = {'username': 'john doe',
             'password': 'qwerty'}
 
-    async with await sso_client.sign_in(body) as response:
-        print(response)
+    response = await sso_client.sign_in(body)
+    print(response)
 
     body = {'username': 'john doe',
             'old_password': 'qwerty',
             'new_password': 'qwerty'}
 
-    async with await sso_client.reset_password(body) as response:
-        print(response)
+    response = await sso_client.reset_password(body)
+    print(response)
 
-    async with await sso_client.sign_out() as response:
-        print(response)
+    response = await sso_client.sign_out()
+    print(response)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
@@ -129,8 +120,14 @@ loop.run_until_complete(main())
 ```
 Environment variables are used to determine url/connection parameters in base classes:
 
-|            env variable         |         value         |
-|               ---               |          ---          |
-| COMMON_API_CLIENT_LOGGING_LEVEL |           40          |
+|            env variable         |             value               |
+|               ---               |              ---                |
+| SSO_API_HOST                    |    localhost, www.example.com   |
+| SSO_API_PORT                    |              8080               |
+| PARSER_API_HOST                 |    localhost, www.example.com   |
+| PARSER_API_PORT                 |              8080               |
+| AGGREGATOR_API_HOST             |    localhost, www.example.com   |
+| AGGREGATOR_API_PORT             |              8080               |
+| COMMON_API_CLIENT_LOGGING_LEVEL |               40                |
 
 see numeric represents logging level here: https://docs.python.org/3/library/logging.html#logging-levels
