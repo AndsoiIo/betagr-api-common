@@ -34,9 +34,9 @@ class BaseClient:
     async def _request(self, method, api_uri, params: dict = None, headers: dict = {}, data: dict = None)\
             -> ClientResponse:
 
-        if not self.port and self.host:
-            logging.error(f"port and/or host variable missed for {self}", exc_info=True)
-            raise ClientConfigurationError(f"port and/or host variable missed for {self}")
+        if not self.port or self.host:
+            logging.error(f"port and/or host variables are missed for {self}", exc_info=True)
+            raise ClientConfigurationError(f"port and/or host variables are missed for {self}")
 
         if not data:
             data = {}
@@ -44,7 +44,8 @@ class BaseClient:
             headers.update(self.headers)
 
         request_url = f"{self.url}/{api_uri}"
-        logging.info(f'request from {self.__class__.__name__}: {method} {request_url} {params}, with {data}')
+        logging.info(f'request from {self.__class__.__name__}: {method} {request_url} '
+                     f'params: {params}, with data: {data}')
 
         async with aiohttp.ClientSession() as session:
             async with session.request(method=method, url=request_url, data=data, params=params, headers=headers) as resp:

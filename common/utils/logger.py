@@ -16,7 +16,7 @@ def start_logging(client):
                         format='[%(asctime)s] - [%(levelname)s] - %(message)s',
                         datefmt='%d-%m-%y %H:%M:%S')
 
-    logging.info('Start logging...')
-    logging.info(f'Client {client.__class__.__name__} created:'
-                 f' host - {client.url},'
-                 f' headers - {client.headers}')
+    logging.info(f'Start logging client...\n'
+                 f'Client {client.__class__.__name__} created with: '
+                 f'polled server host: {client.url}, '
+                 f'with default headers: {client.headers}.')
