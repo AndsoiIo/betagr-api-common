@@ -1,5 +1,6 @@
 import aiohttp
 import logging
+import json
 
 from common.utils import ClientResponse
 from common.utils import logger
@@ -42,6 +43,9 @@ class BaseClient:
             data = {}
         if data and "Content-Type" not in headers:
             headers.update(self.headers)
+        if isinstance(data, dict):
+            data = json.dumps(data)
+
 
         request_url = f"{self.url}/{api_uri}"
         logging.info(f'request from {self.__class__.__name__}: {method} {request_url} '
