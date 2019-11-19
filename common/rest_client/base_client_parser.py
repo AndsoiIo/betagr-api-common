@@ -12,33 +12,33 @@ class BaseClientParser(BaseClient):
         super().__init__(headers=headers)
 
     async def get_all_teams(self):
-        url = 'parse-links/teams'
+        url = '/parse-links'
         response = await self.get(api_uri=url)
-        return response.json()
+        return response.json
 
     async def get_teams_by_link(self, link_id):
-        url = 'parse-links/{link_id}/teams'.format(link_id=link_id)
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
         response = await self.get(api_uri=url)
         if response.status == 404:
             return {"status": response.status}
-        return {"json": response.json(), "status": response.status}
+        return response
 
     async def put_teams_by_link(self, link_id):
-        url = 'parse-links/{link_id}/teams'.format(link_id=link_id)
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
         response = await self.put(api_uri=url)
-        return response.json()
+        return response.json
 
     async def delete_teams_by_link(self, link_id):
-        url = 'parse-links/{link_id}/teams'.format(link_id=link_id)
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
         response = await self.delete(api_uri=url)
-        return response.json()
+        return response.json
 
     async def get_real_teams(self):
-        url = 'real-teams'
+        url = '/real-teams'
         response = await self.get(api_uri=url)
-        return response.json()
+        return response.json
 
     async def put_real_teams(self):
-        url = 'real-teams'
+        url = '/real-teams'
         response = await self.put(api_uri=url)
-        return response.json()
+        return response.json

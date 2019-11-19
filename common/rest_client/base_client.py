@@ -2,7 +2,7 @@ import aiohttp
 import logging
 import json
 
-from common.utils import ClientResponse
+from common.utils import client_response as ClientResponse
 from common.utils import logger
 from common.rest_client.exceptions import ClientConfigurationError
 
@@ -14,7 +14,7 @@ class BaseClient:
 
     def __init__(self, headers=None):
         self.headers = headers or {'Content-Type': 'application/json'}
-        self._url = f'http://{self.host}:{self.port}'
+        self._url = f'http://{self.host}:{self.port}/'
         logger.start_logging(client=self)
 
     def __str__(self):
@@ -22,7 +22,7 @@ class BaseClient:
 
     @property
     def host(self):
-        return self._host
+        return self._host.rstrip('/')
 
     @property
     def port(self):
@@ -32,39 +32,44 @@ class BaseClient:
     def url(self):
         return self._url
 
-    async def _request(self, method, api_uri, params: dict = None, headers: dict = {}, data: dict = None)\
+    async def _request(self, method, api_uri, params: dict = None,
+                       headers: dict = {}, data: dict = None, **kwargs)\
             -> ClientResponse:
 
         if not (self.port and self.host):
-            logging.error(f"port and/or host variables are missed for {self}", exc_info=True)
-            raise ClientConfigurationError(f"port and/or host variables are missed for {self}")
+            msg = f"ClientConfigurationError: port and/or host variables are missed for {self}"
+            logging.error(msg, exc_info=True)
+            raise ClientConfigurationError(msg)
 
         if not data:
             data = {}
         if data and "Content-Type" not in headers:
             headers.update(self.headers)
-        if isinstance(data, dict):
-            data = json.dumps(data)
 
-
-        request_url = f"{self.url}/{api_uri}"
-        logging.info(f'request from {self.__class__.__name__}: {method} {request_url} '
-                     f'params: {params}, with data: {data}')
+        request_url = f"{self.url}{api_uri.lstrip('/')}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.request(method=method, url=request_url, data=data, params=params, headers=headers) as resp:
-                try:
-                    request_json = await resp.json()
-                # type: ignore
-                except aiohttp.ContentTypeError:
-                    return ClientResponse(raw_content=await resp.read(), status=resp.status,
-                                          reason=resp.reason, headers=resp.headers)
+            async with session.request(method=method,
+                                       url=request_url,
+                                       params=params,
+                                       data=data,
+                                       headers=headers) as resp:
+
+                logging.info(f'{self.__class__.__name__} sent request: {method} {resp.url} '
+                             f'with data: {data}')
 
                 try:
-                    data = request_json["data"]
-                    return ClientResponse(json=data, status=resp.status, reason=resp.reason, headers=resp.headers)
-                except (KeyError, TypeError):
-                    return ClientResponse(json=request_json, status=resp.status, reason=resp.reason, headers=resp.headers)
+                    data = await resp.json()
+                # type: ignore
+                except aiohttp.ContentTypeError as e:
+                    logging.error(msg=e)
+                    return ClientResponse(status=resp.status, reason=resp.reason,
+                                          headers=resp.headers,
+                                          json={}, raw_content=await resp.read())
+
+                return ClientResponse(status=resp.status, reason=resp.reason,
+                                      headers=resp.headers,
+                                      json=data, raw_content=json.dumps(data))
 
 
     async def get(self, api_uri, params=None, **kwargs):

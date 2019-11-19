@@ -13,17 +13,17 @@ class BaseClientSSO(BaseClient):
         super().__init__(headers=headers)
 
     async def sign_up(self, body):
-        url = 'sign-up'
+        url = '/sign-up'
         return await self.post(url, body=body)
 
     async def sign_in(self, body):
-        url = 'sign-in'
+        url = '/sign-in'
         return await self.post(url, body=body)
 
     async def sign_out(self):
-        url = 'sign-out'
+        url = '/sign-out'
         return await self.post(url)
 
     async def reset_password(self, body):
-        url = 'reset-password'
+        url = '/reset-password'
         return await self.patch(url, body=body)
