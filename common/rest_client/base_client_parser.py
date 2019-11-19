@@ -19,8 +19,6 @@ class BaseClientParser(BaseClient):
     async def get_teams_by_link(self, link_id):
         url = '/parse-links/{link_id}'.format(link_id=link_id)
         response = await self.get(api_uri=url)
-        if response.status == 404:
-            return {"status": response.status}
         return response
 
     async def put_teams_by_link(self, link_id):
