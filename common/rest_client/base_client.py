@@ -13,7 +13,7 @@ class BaseClient:
 
     def __init__(self, headers=None):
         self.headers = headers or {'Content-Type': 'application/json'}
-        self._url = f'http://{self.host}:{self.port}/'
+        self._url = f'http://{self.host}:{self.port}'
         logger.start_logging(client=self)
 
     def __str__(self):
@@ -47,19 +47,19 @@ class BaseClient:
         logging.info(f'request from {self.__class__.__name__}: {method} {request_url} {params}, with {data}')
 
         async with aiohttp.ClientSession() as session:
-            async with session.request(method=method, url=request_url, data=data, headers=headers) as response:
+            async with session.request(method=method, url=request_url, data=data, params=params, headers=headers) as resp:
                 try:
-                    request_json = await response.json()
+                    request_json = await resp.json()
                 # type: ignore
                 except aiohttp.ContentTypeError:
-                    return ClientResponse(raw_content=response.content, status=response.status,
-                                          headers=response.headers)
+                    return ClientResponse(raw_content=await resp.read(), status=resp.status,
+                                          reason=resp.reason, headers=resp.headers)
 
                 try:
                     data = request_json["data"]
-                    return ClientResponse(json=data, status=response.status, headers=response.headers)
+                    return ClientResponse(json=data, status=resp.status, reason=resp.reason, headers=resp.headers)
                 except (KeyError, TypeError):
-                    return ClientResponse(json=request_json, status=response.status, headers=response.headers)
+                    return ClientResponse(json=request_json, status=resp.status, reason=resp.reason, headers=resp.headers)
 
 
     async def get(self, api_uri, params=None, **kwargs):
