@@ -34,7 +34,7 @@ class BaseClient:
     async def _request(self, method, api_uri, params: dict = None, headers: dict = {}, data: dict = None)\
             -> ClientResponse:
 
-        if not self.port or self.host:
+        if not (self.port and self.host):
             logging.error(f"port and/or host variables are missed for {self}", exc_info=True)
             raise ClientConfigurationError(f"port and/or host variables are missed for {self}")
 
