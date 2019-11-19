@@ -31,7 +31,7 @@ class BaseClient:
     def url(self):
         return self._url
 
-    async def _request(self, method, api_uri, params: dict = None, headers: dict = None, data: dict = None)\
+    async def _request(self, method, api_uri, params: dict = None, headers: dict = {}, data: dict = None)\
             -> ClientResponse:
 
         if not self.port and self.host:
@@ -40,8 +40,8 @@ class BaseClient:
 
         if not data:
             data = {}
-        if data and "content-type" not in [key.lower() for key in headers.keys()]:
-            headers = self.headers
+        if data and "Content-Type" not in headers:
+            headers.update(self.headers)
 
         request_url = f"{self.url}/{api_uri}"
         logging.info(f'request from {self.__class__.__name__}: {method} {request_url} {params}, with {data}')
