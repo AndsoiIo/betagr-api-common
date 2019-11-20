@@ -11,32 +11,37 @@ class BaseClientParser(BaseClient):
     def __init__(self, headers=None):
         super().__init__(headers=headers)
 
-    async def get_all_teams(self):
-        url = '/parse-links?parse_by=teams'
-        response = await self.get(api_uri=url)
-        return response.json
-
-    async def get_teams_by_link(self, link_id):
-        url = '/parse-links/{link_id}?parse_by=teams'.format(link_id=link_id)
+    async def get_all_links(self, params=None):
+        url = '/parse-links'
+        if params:
+            url = f'{url}?parse_by={params}'
         response = await self.get(api_uri=url)
         return response
 
-    async def put_teams_by_link(self, link_id):
-        url = '/parse-links/{link_id}?parse_by=teams'.format(link_id=link_id)
+    async def put_all_links(self, params=None):
+        url = '/parse-links'
+        if params:
+            url = f'{url}?parse_by={params}'
         response = await self.put(api_uri=url)
-        return response.json
+        return response
 
-    async def delete_teams_by_link(self, link_id):
-        url = '/parse-links/{link_id}?parse_by=teams'.format(link_id=link_id)
-        response = await self.delete(api_uri=url)
-        return response.json
-
-    async def get_real_teams(self):
-        url = '/real-teams'
+    async def get_by_link(self, link_id, params=None):
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
+        if params:
+            url = f'{url}?parse_by={params}'
         response = await self.get(api_uri=url)
-        return response.json
+        return response
 
-    async def put_real_teams(self):
-        url = '/real-teams'
+    async def put_by_link(self, link_id, params=None):
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
+        if params:
+            url = f'{url}?parse_by={params}'
         response = await self.put(api_uri=url)
-        return response.json
+        return response
+
+    async def delete_by_link(self, link_id, params=None):
+        url = '/parse-links/{link_id}'.format(link_id=link_id)
+        if params:
+            url = f'{url}?parse_by={params}'
+        response = await self.delete(api_uri=url)
+        return response
