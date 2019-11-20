@@ -32,8 +32,7 @@ class BaseClient:
     def url(self):
         return self._url
 
-    async def _request(self, method, api_uri, params: dict = None,
-                       headers: dict = {}, data: dict = None, **kwargs)\
+    async def _request(self, method, api_uri, params=None, headers=None, data=None, **kwargs)\
             -> ClientResponse:
 
         if not (self.port and self.host):
@@ -41,10 +40,11 @@ class BaseClient:
             logging.error(msg, exc_info=True)
             raise ClientConfigurationError(msg)
 
-        if not data:
-            data = {}
-        if data and "Content-Type" not in headers:
-            headers.update(self.headers)
+        if not headers:
+            headers = self.headers
+
+        if data and "content-type" not in map(str.lower, headers):
+            headers.update({'Content-Type': 'application/json'})
 
         request_url = f"{self.url}{api_uri.lstrip('/')}"
 
@@ -52,17 +52,17 @@ class BaseClient:
             async with session.request(method=method,
                                        url=request_url,
                                        params=params,
-                                       data=data,
+                                       json=data,
                                        headers=headers) as resp:
 
                 logging.info(f'{self.__class__.__name__} sent request: {method} {resp.url} '
-                             f'with data: {data}')
+                             f'with data: type({type(data)}){data}')
 
                 try:
                     data = await resp.json()
                 # type: ignore
                 except aiohttp.ContentTypeError as e:
-                    logging.error(msg=e)
+                    logging.error(msg=e, exc_info=True)
                     return ClientResponse(status=resp.status, reason=resp.reason,
                                           headers=resp.headers,
                                           json={}, raw_content=await resp.read())

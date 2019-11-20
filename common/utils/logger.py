@@ -13,7 +13,7 @@ def start_logging(client):
     logging_mode = os.getenv('COMMON_API_CLIENT_LOGGING_LEVEL', 40)  # Error by default
 
     logging.basicConfig(level=int(logging_mode),
-                        format='[%(asctime)s] - [%(levelname)s] - %(message)s',
+                        format='[%(asctime)s] - [%(levelname)s] [%(filename)s>%(lineno)d] - %(message)s',
                         datefmt='%d-%m-%y %H:%M:%S')
 
     logging.info(f'Start logging client...\n'
