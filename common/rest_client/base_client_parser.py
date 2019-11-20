@@ -45,3 +45,10 @@ class BaseClientParser(BaseClient):
             url = f'{url}?parse_by={params}'
         response = await self.delete(api_uri=url)
         return response
+
+    async def approve_team(self, team_id, json):
+        url = '/approve-team/{team_id}'.format(team_id=team_id)
+        if not isinstance(json, dict):
+            json = {}
+        response = await self.patch(api_uri=url, data=json)
+        return response
