@@ -1,6 +1,7 @@
 import aiohttp
 import logging
 import json
+import http
 
 from common.utils import client_response as ClientResponse
 from common.utils import logger
@@ -14,6 +15,7 @@ class BaseClient:
 
     def __init__(self, headers=None):
         self.headers = headers or {'Content-Type': 'application/json'}
+        self._cookies = {}
         self._url = f'http://{self.host}:{self.port}/'
         logger.start_logging(client=self)
 
@@ -31,6 +33,21 @@ class BaseClient:
     @property
     def url(self):
         return self._url
+
+    @property
+    def cookies(self):
+        return self._cookies
+
+    def update_cookies(self, cookies):
+        """ Use to update client cookies
+        :param cookies: dict or http.cookie.SimpleCookie
+        :return: None
+        """
+        try:
+            for key, morsel in cookies.items():
+                self._cookies.update({key: str(morsel.value)})
+        except Exception as e:
+            logging.error(f"{e.__class__.__name__} raise error during updating cookies: {e}", exc_info=True)
 
     async def _request(self, method, api_uri, params=None, headers=None, data=None, **kwargs)\
             -> ClientResponse:
@@ -53,6 +70,7 @@ class BaseClient:
                                        url=request_url,
                                        params=params,
                                        json=data,
+                                       cookies=kwargs.get('cookies', {}),
                                        headers=headers) as resp:
 
                 logging.info(f'{self.__class__.__name__} sent request: {method} {resp.url} '
