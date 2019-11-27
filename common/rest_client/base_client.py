@@ -60,7 +60,6 @@ class BaseClient:
 
                 try:
                     data = await resp.json()
-                # type: ignore
                 except aiohttp.ContentTypeError as e:
                     logging.error(msg=e, exc_info=True)
                     return ClientResponse(status=resp.status, reason=resp.reason,
@@ -70,7 +69,6 @@ class BaseClient:
                 return ClientResponse(status=resp.status, reason=resp.reason,
                                       headers=resp.headers,
                                       json=data, raw_content=json.dumps(data))
-
 
     async def get(self, api_uri, params=None, **kwargs):
         return await self._request('GET', api_uri=api_uri, params=params, **kwargs)
