@@ -46,7 +46,7 @@ class BaseClientParser(BaseClient):
         response = await self.delete(api_uri=url)
         return response
 
-    async def approve_team(self, team_id, json):
+    async def change_status_team(self, team_id, json):
         url = '/change-status-team/{team_id}'.format(team_id=team_id)
         if not isinstance(json, dict):
             json = {}
