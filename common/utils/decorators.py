@@ -1,8 +1,10 @@
 from functools import wraps
 
-from rest_client.base_client_sso import BaseClientSSO
+from sanic.response import json
+from ..rest_client.base_client_sso import BaseClientSSO
 
 client = BaseClientSSO()
+
 
 def authorized():
     def decorator(f):
@@ -11,7 +13,7 @@ def authorized():
             response = await client.check_auth()
             if response.status == 200:
                 return await f(request, *args, **kwargs)
-            return response
+            return json(response.json, response.status)
         return decorated_function
     return decorator
 
@@ -23,7 +25,7 @@ def authorized_and_user_has(permission):
             response = await client.check_auth_and_user_has(json={"permission": permission})
             if response.status == 200:
                 return await f(request, *args, **kwargs)
-            return response
+            return json(response.json, response.status)
         return decorated_function
     return decorator
 
@@ -35,6 +37,6 @@ def authorized_and_user_in_group(group):
             response = await client.check_auth_and_user_in_group(json={"group": group})
             if response.status == 200:
                 return await f(request, *args, **kwargs)
-            return response
+            return json(response.json, response.status)
         return decorated_function
     return decorator
