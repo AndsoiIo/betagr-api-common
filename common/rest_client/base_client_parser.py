@@ -47,7 +47,7 @@ class BaseClientParser(BaseClient):
         return response
 
     async def approve_team(self, team_id, json):
-        url = '/approve-team/{team_id}'.format(team_id=team_id)
+        url = '/change-status-team/{team_id}'.format(team_id=team_id)
         if not isinstance(json, dict):
             json = {}
         response = await self.patch(api_uri=url, data=json)
