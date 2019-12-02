@@ -39,3 +39,7 @@ class BaseClientSSO(BaseClient):
     async def check_auth_and_user_has(self, json):
         url = '/check-group'
         return await self.post(url, data=json)
+
+    async def check_auth_and_get_permissions(self):
+        url = '/get-permissions'
+        return await self.get(url)
