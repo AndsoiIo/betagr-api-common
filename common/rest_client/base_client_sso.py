@@ -33,11 +33,11 @@ class BaseClientSSO(BaseClient):
         return await self.post(url)
 
     async def check_auth_and_user_in_group(self, json):
-        url = '/check-permission'
+        url = '/check-group'
         return await self.post(url, data=json)
 
     async def check_auth_and_user_has(self, json):
-        url = '/check-group'
+        url = '/check-permission'
         return await self.post(url, data=json)
 
     async def check_auth_and_get_permissions(self):
