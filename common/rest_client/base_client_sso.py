@@ -28,18 +28,18 @@ class BaseClientSSO(BaseClient):
         url = '/reset-password'
         return await self.patch(url, data=json)
 
-    async def check_auth(self):
+    async def check_auth(self, cookies):
         url = '/check-auth'
-        return await self.post(url)
+        return await self.post(url, cookies=cookies)
 
-    async def check_auth_and_user_in_group(self, json):
+    async def check_auth_and_user_in_group(self, json, cookies):
         url = '/check-group'
-        return await self.post(url, data=json)
+        return await self.post(url, data=json, cookies=cookies)
 
-    async def check_auth_and_user_has(self, json):
+    async def check_auth_and_user_has(self, json, cookies):
         url = '/check-permission'
-        return await self.post(url, data=json)
+        return await self.post(url, data=json, cookies=cookies)
 
-    async def check_auth_and_get_permissions(self):
+    async def check_auth_and_get_permissions(self, cookies):
         url = '/get-permissions'
-        return await self.get(url)
+        return await self.get(url, cookies=cookies)

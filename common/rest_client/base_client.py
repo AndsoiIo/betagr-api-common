@@ -53,7 +53,8 @@ class BaseClient:
                                        url=request_url,
                                        params=params,
                                        json=data,
-                                       headers=headers) as resp:
+                                       headers=headers,
+                                       **kwargs) as resp:
 
                 logging.info(f'{self.__class__.__name__} sent request: {method} {resp.url} '
                              f'with data: type({type(data)}){data}')
