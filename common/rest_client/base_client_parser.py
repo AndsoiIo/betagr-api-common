@@ -11,7 +11,7 @@ class BaseClientParser(BaseClient):
     def __init__(self, headers=None):
         super().__init__(headers=headers)
 
-    async def parse_team(self, url, cls, elem):
+    async def parse_teams(self, url, cls, elem):
         parser_url = '/parse'
         req_json = {"url": url, "cls": cls, "elem": elem}
         response = await self.post(api_uri=parser_url, data=req_json)
