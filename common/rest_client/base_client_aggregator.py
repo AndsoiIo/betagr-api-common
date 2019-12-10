@@ -8,9 +8,6 @@ class BaseClientAggregator(BaseClient):
     _host = os.getenv('AGGREGATOR_API_HOST')
     _port = int(os.getenv('AGGREGATOR_API_PORT'))
 
-    def __init__(self, headers=None):
-        super().__init__(headers=headers)
-
     async def aggregator(self, team=None):
         url = '/aggregate'
         params = {}

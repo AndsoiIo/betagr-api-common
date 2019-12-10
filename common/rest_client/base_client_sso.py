@@ -9,9 +9,6 @@ class BaseClientSSO(BaseClient):
     _host = os.getenv('SSO_API_HOST')
     _port = int(os.getenv('SSO_API_PORT'))
 
-    def __init__(self, headers=None):
-        super().__init__(headers=headers)
-
     async def sign_up(self, json):
         url = '/sign-up'
         return await self.post(url, data=json)
