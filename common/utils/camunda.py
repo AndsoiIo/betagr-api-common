@@ -11,7 +11,7 @@ class Camunda:
     }
 
     @classmethod
-    async def init(cls, name_process_definition):
+    async def get_process_definition_id(cls, name_process_definition):
         resp = await client_camunda.get_process_definition(name_process_definition)
         process_definition_list = resp.json
         process_definition_id = process_definition_list[0]["id"] if process_definition_list else None
@@ -20,12 +20,12 @@ class Camunda:
             raise CamundaException(f"Can not init process. "
                                    f"'{name_process_definition}' process definition does not exists")
 
-        process_instance_id = await cls._start_process(process_definition_id)
-        return process_instance_id
+        return process_definition_id
 
     @classmethod
-    async def _start_process(cls, process_definition_id):
+    async def start_process(cls, process_definition_id):
         resp = await client_camunda.process_definition_start(process_definition_id)
+
         if resp.status != 200:
             raise CamundaException("Can not start process instance")
 
