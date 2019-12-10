@@ -9,9 +9,6 @@ class BaseClientCamunda(BaseClient):
     _port = int(os.getenv('CAMUNDA_API_PORT'))
     _url_api = 'engine-rest/engine/default'
 
-    def __init__(self, headers=None):
-        super().__init__(headers=headers)
-
     async def get_process_definition(self, name_process_definition):
         url = f"{self._url_api}/process-definition?name={name_process_definition}"
         response = await self.get(api_uri=url)

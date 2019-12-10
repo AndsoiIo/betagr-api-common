@@ -8,9 +8,6 @@ class BaseClientBettingData(BaseClient):
     _host = os.getenv('BETTING_DATA_API_HOST')
     _port = int(os.getenv('BETTING_DATA_API_PORT'))
 
-    def __init__(self, headers=None):
-        super().__init__(headers=headers)
-
     async def get_all_links(self, params=None):
         url = '/links'
         if params:
