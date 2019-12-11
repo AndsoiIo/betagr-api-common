@@ -23,8 +23,8 @@ class Camunda:
         return process_definition_id
 
     @classmethod
-    async def start_process(cls, process_definition_id):
-        resp = await client_camunda.process_definition_start(process_definition_id)
+    async def start_process(cls, process_definition_id, business_key):
+        resp = await client_camunda.process_definition_start(process_definition_id, business_key)
 
         if resp.status != 200:
             raise CamundaException("Can not start process instance")
@@ -39,7 +39,19 @@ class Camunda:
         return task[0] if task else None
 
     @classmethod
-    async def task_complete(cls, process_instance_id, name, value):
+    async def _get_process_instance(cls, business_key):
+        resp = await client_camunda.get_process_instance(business_key)
+        process_instance = resp.json
+        return process_instance[0] if process_instance else None
+
+    @classmethod
+    async def task_complete(cls, business_key, name, value):
+        process_instance = await cls._get_process_instance(business_key)
+
+        if not process_instance:
+            raise CamundaException("Business key not valid")
+
+        process_instance_id = process_instance["id"]
         current_task = await cls._get_current_task(process_instance_id)
 
         if not current_task:
@@ -49,7 +61,7 @@ class Camunda:
             raise CamundaException(f"Can not task complete. Task '{name}' not match with name current task")
 
         action = cls.workflow_steps[name]
-        resp = await client_camunda.task_complete(current_task['id'], action, value)
+        resp = await client_camunda.task_complete(current_task["id"], action, value)
 
         if resp.status != 204:
             raise CamundaException("Can not task complete. Not valid value")

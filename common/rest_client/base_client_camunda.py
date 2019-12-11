@@ -14,9 +14,14 @@ class BaseClientCamunda(BaseClient):
         response = await self.get(api_uri=url)
         return response
 
-    async def process_definition_start(self, process_definition_id):
+    async def process_definition_start(self, process_definition_id, business_key):
         url = f"{self._url_api}/process-definition/{process_definition_id}/start"
-        response = await self.post(api_uri=url)
+        response = await self.post(api_uri=url, data={"businessKey": business_key})
+        return response
+
+    async def get_process_instance(self, business_key):
+        url = f"{self._url_api}/process-instance?businessKey={business_key}"
+        response = await self.get(api_uri=url)
         return response
 
     async def get_current_task(self, process_instance_id):
