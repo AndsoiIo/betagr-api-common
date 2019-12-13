@@ -13,7 +13,8 @@ class BaseClientBettingData(BaseClient):
         if link_id:
             url = f'{url}?link_id={link_id}'
         response = await self.get(api_uri=url)
-        return response
+        teams = response.json
+        return teams
 
     async def put_teams(self, link_id=None):
         url = '/teams'
@@ -32,7 +33,8 @@ class BaseClientBettingData(BaseClient):
     async def get_real_teams(self):
         url = '/real-teams'
         response = await self.get(api_uri=url)
-        return response
+        real_teams = response.json
+        return real_teams
 
     async def put_real_teams(self):
         url = '/real-teams'
