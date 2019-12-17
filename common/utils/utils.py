@@ -17,3 +17,11 @@ def prepared_data(data=None):
         payload.add_field(key, str(value))
 
     return payload
+
+
+async def check_validation_params(valid_column, *params):
+    flag = True
+    for param in params:
+        if param and set(param) - set(valid_column):
+            flag = False
+    return flag
