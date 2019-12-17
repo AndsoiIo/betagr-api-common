@@ -8,19 +8,15 @@ class BaseClientBettingData(BaseClient):
     _host = os.getenv('BETTING_DATA_API_HOST')
     _port = int(os.getenv('BETTING_DATA_API_PORT'))
 
-    async def get_teams(self, link_id=None):
+    async def get_teams(self, **param):
         url = '/teams'
-        if link_id:
-            url = f'{url}?link_id={link_id}'
-        response = await self.get(api_uri=url)
+        response = await self.get(api_uri=url, params=param)
         teams = response.json
         return teams
 
-    async def put_teams(self, link_id=None):
+    async def create_team(self, **param):
         url = '/teams'
-        if link_id:
-            url = f'{url}?link_id={link_id}'
-        response = await self.put(api_uri=url)
+        response = await self.post(api_uri=url, params=param)
         return response
 
     async def change_status_team(self, team_id, json):
@@ -30,9 +26,9 @@ class BaseClientBettingData(BaseClient):
         response = await self.patch(api_uri=url, data=json)
         return response
 
-    async def get_real_teams(self):
+    async def get_real_teams(self, **param):
         url = '/real-teams'
-        response = await self.get(api_uri=url)
+        response = await self.get(api_uri=url, params=param)
         real_teams = response.json
         return real_teams
 
@@ -40,3 +36,9 @@ class BaseClientBettingData(BaseClient):
         url = '/real-teams'
         response = await self.put(api_uri=url)
         return response
+
+    async def get_links(self, **param):
+        url = '/links'
+        response = await self.get(api_uri=url, params=param)
+        real_teams = response.json
+        return real_teams
