@@ -14,9 +14,9 @@ class BaseClientBettingData(BaseClient):
         teams = response.json
         return teams
 
-    async def create_team(self, **param):
+    async def create_team(self, json):
         url = '/teams'
-        response = await self.post(api_uri=url, params=param)
+        response = await self.post(api_uri=url, data=json)
         return response
 
     async def change_status_team(self, team_id, json):
