@@ -32,9 +32,9 @@ class BaseClientBettingData(BaseClient):
         real_teams = response.json
         return real_teams
 
-    async def put_real_teams(self):
+    async def create_real_teams(self, json):
         url = '/real-teams'
-        response = await self.put(api_uri=url)
+        response = await self.put(api_uri=url, data=json)
         return response
 
     async def get_links(self, **param):
