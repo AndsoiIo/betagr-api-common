@@ -34,7 +34,7 @@ class BaseClientBettingData(BaseClient):
 
     async def create_real_teams(self, json):
         url = '/real-teams'
-        response = await self.put(api_uri=url, data=json)
+        response = await self.post(api_uri=url, data=json)
         return response
 
     async def get_links(self, **param):
